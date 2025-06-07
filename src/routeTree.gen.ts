@@ -28,6 +28,7 @@ import { Route as ClerkAuthenticatedRouteImport } from './routes/clerk/_authenti
 import { Route as ClerkauthRouteImport } from './routes/clerk/(auth)/route'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedUsersIndexImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedTransactionsIndexImport } from './routes/_authenticated/transactions/index'
 import { Route as AuthenticatedTasksIndexImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedHelpCenterIndexImport } from './routes/_authenticated/help-center/index'
@@ -143,6 +144,13 @@ const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexImport.update({
   path: '/users/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+
+const AuthenticatedTransactionsIndexRoute =
+  AuthenticatedTransactionsIndexImport.update({
+    id: '/transactions/',
+    path: '/transactions/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexImport.update({
   id: '/tasks/',
@@ -424,6 +432,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/transactions/': {
+      id: '/_authenticated/transactions/'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof AuthenticatedTransactionsIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
@@ -466,6 +481,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
+  AuthenticatedTransactionsIndexRoute: typeof AuthenticatedTransactionsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
 }
 
@@ -476,6 +492,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
+  AuthenticatedTransactionsIndexRoute: AuthenticatedTransactionsIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
 }
 
@@ -553,6 +570,7 @@ export interface FileRoutesByFullPath {
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/transactions': typeof AuthenticatedTransactionsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
 }
 
@@ -581,6 +599,7 @@ export interface FileRoutesByTo {
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/transactions': typeof AuthenticatedTransactionsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
 }
 
@@ -614,6 +633,7 @@ export interface FileRoutesById {
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/_authenticated/transactions/': typeof AuthenticatedTransactionsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
 }
 
@@ -647,6 +667,7 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/settings/'
     | '/tasks'
+    | '/transactions'
     | '/users'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -674,6 +695,7 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/settings'
     | '/tasks'
+    | '/transactions'
     | '/users'
   id:
     | '__root__'
@@ -705,6 +727,7 @@ export interface FileRouteTypes {
     | '/_authenticated/help-center/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
+    | '/_authenticated/transactions/'
     | '/_authenticated/users/'
   fileRoutesById: FileRoutesById
 }
@@ -772,6 +795,7 @@ export const routeTree = rootRoute
         "/_authenticated/chats/",
         "/_authenticated/help-center/",
         "/_authenticated/tasks/",
+        "/_authenticated/transactions/",
         "/_authenticated/users/"
       ]
     },
@@ -888,6 +912,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/tasks/": {
       "filePath": "_authenticated/tasks/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/transactions/": {
+      "filePath": "_authenticated/transactions/index.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/users/": {

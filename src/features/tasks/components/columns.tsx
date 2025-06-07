@@ -1,10 +1,20 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { labels, priorities, statuses } from '../data/data'
 import { Task } from '../data/schema'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
+
+const STATUS_OPTIONS = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'cancelled', label: 'Cancelled' },
+  { value: 'backlog', label: 'Backlog' },
+  { value: 'todo', label: 'To Do' },
+  { value: 'done', label: 'Done' }
+]
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -32,31 +42,17 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'id',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Task' />
-    ),
-    cell: ({ row }) => <div className='w-[80px]'>{row.getValue('id')}</div>,
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: 'title',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Title' />
     ),
-    cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label)
-
-      return (
-        <div className='flex space-x-2'>
-          {label && <Badge variant='outline'>{label.label}</Badge>}
-          <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
-            {row.getValue('title')}
-          </span>
-        </div>
-      )
-    },
+    cell: ({ row }) => (
+      <div className='flex space-x-2'>
+        <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
+          {row.getValue('title')}
+        </span>
+      </div>
+    ),
   },
   {
     accessorKey: 'status',
@@ -64,7 +60,7 @@ export const columns: ColumnDef<Task>[] = [
       <DataTableColumnHeader column={column} title='Status' />
     ),
     cell: ({ row }) => {
-      const status = statuses.find(
+      const status = STATUS_OPTIONS.find(
         (status) => status.value === row.getValue('status')
       )
 
@@ -74,10 +70,9 @@ export const columns: ColumnDef<Task>[] = [
 
       return (
         <div className='flex w-[100px] items-center'>
-          {status.icon && (
-            <status.icon className='text-muted-foreground mr-2 h-4 w-4' />
-          )}
-          <span>{status.label}</span>
+          <Badge variant={row.getValue('status') === 'completed' ? 'default' : 'secondary'}>
+            {status.label}
+          </Badge>
         </div>
       )
     },
@@ -86,30 +81,37 @@ export const columns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: 'priority',
+    accessorKey: 'created_by',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Priority' />
+      <DataTableColumnHeader column={column} title='Created By' />
     ),
     cell: ({ row }) => {
-      const priority = priorities.find(
-        (priority) => priority.value === row.getValue('priority')
-      )
-
-      if (!priority) {
-        return null
+      const admin = row.original.created_by
+      if (!admin) {
+        return <span className="text-muted-foreground">No admin</span>
       }
-
       return (
-        <div className='flex items-center'>
-          {priority.icon && (
-            <priority.icon className='text-muted-foreground mr-2 h-4 w-4' />
-          )}
-          <span>{priority.label}</span>
+        <div className='flex flex-col'>
+          <span className='font-medium'>{admin.username}</span>
         </div>
       )
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+  },
+  {
+    accessorKey: 'created_at',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Created At' />
+    ),
+    cell: ({ row }) => {
+      const date = row.getValue('created_at')
+      if (!date || typeof date !== 'string') {
+        return <span className="text-muted-foreground">No date</span>
+      }
+      try {
+        return format(new Date(date), 'MMM d, yyyy')
+      } catch (error) {
+        return <span className="text-muted-foreground">Invalid date</span>
+      }
     },
   },
   {

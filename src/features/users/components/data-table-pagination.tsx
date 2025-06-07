@@ -16,16 +16,23 @@ import {
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>
+  pageCount: number
+  page: number
+  pageSize: number
+  onPageChange: (page: number) => void
+  onPageSizeChange: (pageSize: number) => void
 }
 
 export function DataTablePagination<TData>({
   table,
+  pageCount,
+  page,
+  pageSize,
+  onPageChange,
+  onPageSizeChange
 }: DataTablePaginationProps<TData>) {
   return (
-    <div
-      className='flex items-center justify-between overflow-clip px-2'
-      style={{ overflowClipMargin: 1 }}
-    >
+    <div className='flex items-center justify-between overflow-clip px-2'>
       <div className='text-muted-foreground hidden flex-1 text-sm sm:block'>
         {table.getFilteredSelectedRowModel().rows.length} of{' '}
         {table.getFilteredRowModel().rows.length} row(s) selected.
@@ -34,33 +41,32 @@ export function DataTablePagination<TData>({
         <div className='flex items-center space-x-2'>
           <p className='hidden text-sm font-medium sm:block'>Rows per page</p>
           <Select
-            value={`${table.getState().pagination.pageSize}`}
+            value={`${pageSize}`}
             onValueChange={(value) => {
-              table.setPageSize(Number(value))
+              onPageSizeChange(Number(value))
             }}
           >
             <SelectTrigger className='h-8 w-[70px]'>
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+              <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side='top'>
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
+              {[10, 20, 30, 40, 50].map((size) => (
+                <SelectItem key={size} value={`${size}`}>
+                  {size}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
         <div className='flex w-[100px] items-center justify-center text-sm font-medium'>
-          Page {table.getState().pagination.pageIndex + 1} of{' '}
-          {table.getPageCount()}
+          Page {page} of {pageCount}
         </div>
         <div className='flex items-center space-x-2'>
           <Button
             variant='outline'
             className='hidden h-8 w-8 p-0 lg:flex'
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => onPageChange(1)}
+            disabled={page === 1}
           >
             <span className='sr-only'>Go to first page</span>
             <DoubleArrowLeftIcon className='h-4 w-4' />
@@ -68,8 +74,8 @@ export function DataTablePagination<TData>({
           <Button
             variant='outline'
             className='h-8 w-8 p-0'
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => onPageChange(page - 1)}
+            disabled={page === 1}
           >
             <span className='sr-only'>Go to previous page</span>
             <ChevronLeftIcon className='h-4 w-4' />
@@ -77,8 +83,8 @@ export function DataTablePagination<TData>({
           <Button
             variant='outline'
             className='h-8 w-8 p-0'
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => onPageChange(page + 1)}
+            disabled={page === pageCount}
           >
             <span className='sr-only'>Go to next page</span>
             <ChevronRightIcon className='h-4 w-4' />
@@ -86,8 +92,8 @@ export function DataTablePagination<TData>({
           <Button
             variant='outline'
             className='hidden h-8 w-8 p-0 lg:flex'
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
+            onClick={() => onPageChange(pageCount)}
+            disabled={page === pageCount}
           >
             <span className='sr-only'>Go to last page</span>
             <DoubleArrowRightIcon className='h-4 w-4' />

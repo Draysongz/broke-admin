@@ -22,20 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-export interface User {
-  id: string
-  username: string
-  email: string
-  role: string
-  wallet_address?: string
-  chips_balance?: number
-  brokecoin_balance?: number
-  created_at: string
-  updated_at: string
-  status?: 'active' | 'inactive' | 'invited' | 'suspended'
-  last_login?: string
-}
-import { DataTablePagination } from './data-table-pagination'
+import { DataTablePagination } from '@/features/users/components/data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 
 declare module '@tanstack/react-table' {
@@ -56,7 +43,7 @@ interface DataTableProps<TData> {
   onPageSizeChange: (pageSize: number) => void
 }
 
-export function UsersTable<TData>({ 
+export function TransactionsTable<TData>({ 
   columns, 
   data,
   isLoading,
@@ -79,13 +66,7 @@ export function UsersTable<TData>({
       columnVisibility,
       rowSelection,
       columnFilters,
-      pagination: {
-        pageIndex: page - 1,
-        pageSize,
-      },
     },
-    pageCount,
-    manualPagination: true,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -179,4 +160,4 @@ export function UsersTable<TData>({
       />
     </div>
   )
-}
+} 

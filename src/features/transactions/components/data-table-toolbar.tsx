@@ -2,14 +2,22 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { DataTableFacetedFilter } from './data-table-faceted-filter'
-import { DataTableViewOptions } from './data-table-view-options'
+import { DataTableFacetedFilter } from '@/features/users/components/data-table-faceted-filter'
+import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
 
-const STATUS_OPTIONS = [
-  { label: 'Pending', value: 'pending' },
-  { label: 'In Progress', value: 'in_progress' },
+const TRANSACTION_STATUS = [
   { label: 'Completed', value: 'completed' },
+  { label: 'Pending', value: 'pending' },
+  { label: 'Failed', value: 'failed' },
   { label: 'Cancelled', value: 'cancelled' }
+]
+
+const TRANSACTION_TYPES = [
+  { label: 'Purchase Chips', value: 'purchase_chips' },
+  { label: 'Cashout Chips', value: 'cashout_chips' },
+  { label: 'Bet', value: 'bet' },
+  { label: 'Win', value: 'win' },
+  { label: 'Refund', value: 'refund' }
 ]
 
 interface DataTableToolbarProps<TData> {
@@ -25,12 +33,10 @@ export function DataTableToolbar<TData>({
     <div className='flex items-center justify-between'>
       <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
         <Input
-          placeholder='Filter tasks...'
-          value={
-            (table.getColumn('title')?.getFilterValue() as string) ?? ''
-          }
+          placeholder='Filter by ID...'
+          value={(table.getColumn('id')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('title')?.setFilterValue(event.target.value)
+            table.getColumn('id')?.setFilterValue(event.target.value)
           }
           className='h-8 w-[150px] lg:w-[250px]'
         />
@@ -39,7 +45,14 @@ export function DataTableToolbar<TData>({
             <DataTableFacetedFilter
               column={table.getColumn('status')}
               title='Status'
-              options={STATUS_OPTIONS}
+              options={TRANSACTION_STATUS}
+            />
+          )}
+          {table.getColumn('type') && (
+            <DataTableFacetedFilter
+              column={table.getColumn('type')}
+              title='Type'
+              options={TRANSACTION_TYPES}
             />
           )}
         </div>
@@ -57,4 +70,4 @@ export function DataTableToolbar<TData>({
       <DataTableViewOptions table={table} />
     </div>
   )
-}
+} 

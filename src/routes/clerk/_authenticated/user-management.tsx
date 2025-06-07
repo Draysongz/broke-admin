@@ -19,7 +19,18 @@ import { UsersDialogs } from '@/features/users/components/users-dialogs'
 import { UsersPrimaryButtons } from '@/features/users/components/users-primary-buttons'
 import { UsersTable } from '@/features/users/components/users-table'
 import UsersProvider from '@/features/users/context/users-context'
-import { userListSchema } from '@/features/users/data/schema'
+import { z } from 'zod'
+
+const userListSchema = z.object({
+  users: z.array(z.object({
+    id: z.string(),
+    username: z.string(),
+    email: z.string().email(),
+    role: z.string(),
+    created_at: z.string().datetime(),
+    updated_at: z.string().datetime()
+  }))
+})
 import { users } from '@/features/users/data/users'
 
 export const Route = createFileRoute('/clerk/_authenticated/user-management')({
@@ -90,7 +101,15 @@ function UserManagement() {
               <UsersPrimaryButtons />
             </div>
             <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-              <UsersTable data={userList} columns={columns} />
+              <UsersTable 
+                data={userList.users} 
+                columns={columns}
+                pageCount={1}
+                page={1}
+                pageSize={10}
+                onPageChange={() => {}}
+                onPageSizeChange={() => {}}
+              />
             </div>
           </Main>
 
